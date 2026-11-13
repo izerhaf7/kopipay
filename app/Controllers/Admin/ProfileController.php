@@ -21,13 +21,23 @@ class ProfileController extends BaseController
         if (trim((string)$this->request->getPost('password')) !== '') $rules['password'] = 'min_length[8]|max_length[72]';
         if (! $this->validate($rules)) return redirect()->back()->withInput()->with('errors',$this->validator->getErrors());
         $u->email = $this->request->getPost('email'); $u->username = $this->request->getPost('username');
-        if ($this->request->getPost('password')) $u->setPassword((string)$this->request->getPost('password'));
+        if ($this->request->getPost('password')) {
+            $u->setPassword((string) $this->request->getPost('password'));
+            $u->setForcePassReset(false);
+        }
         $file = $this->request->getFile('photo');
         if ($file && $file->isValid() && ! $file->hasMoved()) {
             if (! in_array($file->getMimeType(), ['image/jpeg','image/png','image/webp'], true) || $file->getSize() > 2*1024*1024) return redirect()->back()->withInput()->with('error','Foto harus JPG, PNG, atau WEBP dan maksimal 2 MB.');
             $dir = FCPATH.'uploads/users'; if (! is_dir($dir)) mkdir($dir,0755,true); $name=$file->getRandomName(); $file->move($dir,$name); $u->photo=$name;
         }
         model(UserModel::class)->save($u);
+        $passwordChanged = trim((string) $this->request->getPost('password')) !== '';
+        if ($passwordChanged) {
+            service('authentication')->logout();
+
+            return redirect()->to(site_url('login'))->with('message', 'Password berhasil diperbarui. Silakan masuk kembali.');
+        }
+
         return redirect()->to(site_url('admin/profile'))->with('message','Profil berhasil diperbarui.');
     }
 }

@@ -9,16 +9,25 @@
 
             <div class="mb-3">
                 <label class="form-label" for="current_password">Password Saat Ini</label>
-                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="current_password" name="current_password" required>
+                    <button class="btn btn-ghost" type="button" data-toggle-password="current_password" aria-label="Lihat password"><i class="bi bi-eye"></i></button>
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="password">Password Baru</label>
-                <input type="password" class="form-control" id="password" name="password" minlength="8" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" minlength="8" required>
+                    <button class="btn btn-ghost" type="button" data-toggle-password="password" aria-label="Lihat password"><i class="bi bi-eye"></i></button>
+                </div>
                 <div class="form-text">Minimal 8 karakter. Jangan pakai tanggal lahir atau nama sendiri.</div>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="password_confirm">Ulangi Password Baru</label>
-                <input type="password" class="form-control" id="password_confirm" name="password_confirm" minlength="8" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password_confirm" name="password_confirm" minlength="8" required>
+                    <button class="btn btn-ghost" type="button" data-toggle-password="password_confirm" aria-label="Lihat password"><i class="bi bi-eye"></i></button>
+                </div>
             </div>
 
             <div class="d-flex gap-2">

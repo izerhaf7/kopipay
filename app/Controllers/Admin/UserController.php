@@ -54,7 +54,14 @@ class UserController extends BaseController
         $rules=['email'=>'required|valid_email|is_unique[users.email,id,'.$id.']','username'=>'required|alpha_numeric_punct|min_length[3]|max_length[30]|is_unique[users.username,id,'.$id.']','group_id'=>'required|is_natural_no_zero'];
         if(trim((string)$this->request->getPost('password'))!=='') $rules['password']='min_length[8]';
         if(!$this->validate($rules)) return redirect()->back()->withInput()->with('errors',$this->validator->getErrors());
-        $u->email=$this->request->getPost('email'); $u->username=$this->request->getPost('username'); if($this->request->getPost('password')) $u->setPassword($this->request->getPost('password')); model(UserModel::class)->save($u); $this->setGroup($id,(int)$this->request->getPost('group_id'));
+        $u->email = $this->request->getPost('email');
+        $u->username = $this->request->getPost('username');
+        if ($this->request->getPost('password')) {
+            $u->setPassword((string) $this->request->getPost('password'));
+            $u->setForcePassReset(false);
+        }
+        model(UserModel::class)->save($u);
+        $this->setGroup($id, (int) $this->request->getPost('group_id'));
         return redirect()->to(site_url('admin/users'))->with('message','User berhasil diperbarui.');
     }
 

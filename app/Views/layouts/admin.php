@@ -128,6 +128,18 @@
         }
     });
 </script>
+<script>
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-toggle-password]');
+        if (!button) return;
+        const input = document.getElementById(button.dataset.togglePassword);
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+        const icon = button.querySelector('i');
+        if (icon) icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        button.setAttribute('aria-label', input.type === 'password' ? 'Lihat password' : 'Sembunyikan password');
+    });
+</script>
 <?= $this->renderSection('scripts') ?>
 </body>
 </html>

@@ -24,15 +24,33 @@
         <?= csrf_field() ?>
         <div class="mb-3">
             <label class="form-label" for="password">Password Baru</label>
-            <input type="password" class="form-control" id="password" name="password" minlength="8" required>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" name="password" minlength="8" required>
+                <button class="btn btn-ghost" type="button" data-toggle-password="password" aria-label="Lihat password"><i class="bi bi-eye"></i></button>
+            </div>
             <div class="form-text">Minimal 8 karakter, kombinasi huruf &amp; angka.</div>
         </div>
         <div class="mb-3">
             <label class="form-label" for="password_confirm">Ulangi Password Baru</label>
-            <input type="password" class="form-control" id="password_confirm" name="password_confirm" minlength="8" required>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password_confirm" name="password_confirm" minlength="8" required>
+                <button class="btn btn-ghost" type="button" data-toggle-password="password_confirm" aria-label="Lihat password"><i class="bi bi-eye"></i></button>
+            </div>
         </div>
         <button class="btn btn-primary w-100 py-2" type="submit">Simpan &amp; Lanjutkan</button>
     </form>
 </div>
+<script>
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-toggle-password]');
+        if (!button) return;
+        const input = document.getElementById(button.dataset.togglePassword);
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+        const icon = button.querySelector('i');
+        if (icon) icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        button.setAttribute('aria-label', input.type === 'password' ? 'Lihat password' : 'Sembunyikan password');
+    });
+</script>
 </body>
 </html>
