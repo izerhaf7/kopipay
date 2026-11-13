@@ -65,22 +65,21 @@ class AttendanceModel extends Model
     }
 
     /**
-     * Rekap enam bulan terakhir untuk grafik ringkasan dashboard.
+     * Rekap perbandingan kehadiran dan ketepatan waktu untuk satu bulan.
      */
     public function monthlyChart(string $start, string $end): array
     {
         return $this->db->table('attendances')
-            ->select('DATE_FORMAT(work_date, "%Y-%m") AS month_key,
-                      SUM(status IN ("hadir", "izin", "sakit", "alpha")) AS total_records,
+            ->select('COUNT(*) AS total_records,
                       SUM(status = "hadir") AS hadir,
+                      SUM(status IN ("izin", "sakit", "alpha")) AS tidak_hadir,
+                      SUM(status = "hadir" AND late_minutes = 0) AS tepat_waktu,
                       SUM(status = "hadir" AND late_minutes > 0) AS terlambat,
                       COALESCE(SUM(late_minutes), 0) AS total_late_minutes', false)
             ->where('work_date >=', $start)
             ->where('work_date <=', $end)
-            ->groupBy('month_key')
-            ->orderBy('month_key', 'ASC')
             ->get()
-            ->getResultArray();
+            ->getRowArray() ?? [];
     }
 
     /**

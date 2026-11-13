@@ -17,7 +17,9 @@ use CodeIgniter\Database\BaseConnection;
  * gross_salary    = days_present x daily_rate
  * late_deduction  = MIN(total_late_minutes x late_rate, gross_salary)
  * alpha_deduction = days_alpha x alpha_penalty
- * net_salary      = MAX(0, gross - late - alpha)
+ * izin_deduction  = days_izin x izin_penalty
+ * sakit_deduction = days_sakit x sakit_penalty
+ * net_salary      = MAX(0, gross - late - izin - sakit - alpha)
  */
 class PayrollService
 {
@@ -67,11 +69,15 @@ class PayrollService
         $dailyRate    = (int) ($row['daily_rate'] ?? 0);
         $lateRate     = (int) ($settings['late_deduction_per_minute'] ?? 0);
         $alphaPenalty = (int) ($settings['alpha_penalty'] ?? 0);
+        $izinPenalty  = (int) ($settings['izin_penalty'] ?? 0);
+        $sakitPenalty = (int) ($settings['sakit_penalty'] ?? 0);
 
         $gross        = $present * $dailyRate;
         $lateDeduct   = min($lateTotal * $lateRate, $gross);
+        $izinDeduct   = $izin * $izinPenalty;
+        $sakitDeduct  = $sakit * $sakitPenalty;
         $alphaDeduct  = $alpha * $alphaPenalty;
-        $net          = max(0, $gross - $lateDeduct - $alphaDeduct);
+        $net          = max(0, $gross - $lateDeduct - $izinDeduct - $sakitDeduct - $alphaDeduct);
 
         return [
             'days_present'       => $present,
@@ -81,9 +87,13 @@ class PayrollService
             'total_late_minutes' => $lateTotal,
             'daily_rate'         => $dailyRate,
             'late_rate'          => $lateRate,
+            'izin_penalty'       => $izinPenalty,
+            'sakit_penalty'      => $sakitPenalty,
             'alpha_penalty'      => $alphaPenalty,
             'gross_salary'       => $gross,
             'late_deduction'     => $lateDeduct,
+            'izin_deduction'     => $izinDeduct,
+            'sakit_deduction'    => $sakitDeduct,
             'alpha_deduction'    => $alphaDeduct,
             'net_salary'         => $net,
         ];

@@ -12,9 +12,9 @@ class PayrollModel extends Model
     protected $returnType    = Payroll::class;
     protected $allowedFields = [
         'payroll_period_id', 'employee_id', 'employee_code', 'employee_name', 'position_name',
-        'daily_rate', 'late_rate', 'alpha_penalty',
+        'daily_rate', 'late_rate', 'izin_penalty', 'sakit_penalty', 'alpha_penalty',
         'days_present', 'days_izin', 'days_sakit', 'days_alpha', 'total_late_minutes',
-        'gross_salary', 'late_deduction', 'alpha_deduction', 'net_salary',
+        'gross_salary', 'late_deduction', 'izin_deduction', 'sakit_deduction', 'alpha_deduction', 'net_salary',
     ];
     protected $useTimestamps = true;
 

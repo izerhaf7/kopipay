@@ -32,6 +32,16 @@
                                    name="alpha_penalty" required value="<?= esc(old('alpha_penalty', $settings['alpha_penalty'])) ?>">
                         </div>
                         <div class="col-12 col-md-6">
+                            <label class="form-label" for="izin_penalty">Potongan Izin per Hari (Rp)</label>
+                            <input type="text" inputmode="numeric" class="form-control kp-money-input" id="izin_penalty" name="izin_penalty" required value="<?= esc(old('izin_penalty', $settings['izin_penalty'] ?? 0)) ?>">
+                            <div class="form-text">Isi 0 jika izin tidak dipotong.</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="sakit_penalty">Potongan Sakit per Hari (Rp)</label>
+                            <input type="text" inputmode="numeric" class="form-control kp-money-input" id="sakit_penalty" name="sakit_penalty" required value="<?= esc(old('sakit_penalty', $settings['sakit_penalty'] ?? 0)) ?>">
+                            <div class="form-text">Isi 0 jika sakit tidak dipotong.</div>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <label class="form-label" for="checkin_early_minutes">Check-in Dibuka (menit sebelum shift)</label>
                             <input type="number" min="0" class="form-control" id="checkin_early_minutes" name="checkin_early_minutes" required
                                    value="<?= esc(old('checkin_early_minutes', $settings['checkin_early_minutes'])) ?>">
@@ -70,19 +80,13 @@
                         </label>
                     </div>
 
-                    <label class="form-label" for="allowed_ip_ranges">Batasan IP (opsional)</label>
-                    <input type="text" class="form-control" id="allowed_ip_ranges" name="allowed_ip_ranges" maxlength="255"
-                           value="<?= esc(old('allowed_ip_ranges', $settings['allowed_ip_ranges'] ?? '')) ?>"
-                           placeholder="192.168.1.0/24, 10.0.0.5">
                     <div class="form-text">
-                        Daftar IP/CIDR dipisah koma. Kosongkan bila tanpa batasan.
                         Waktu check-in selalu diambil dari server, bukan perangkat.
                     </div>
 
                     <hr class="kp-divider">
                     <div class="kp-muted small">
-                        <p class="mb-1"><strong>Batasan yang perlu disadari:</strong> check-in lewat tombol masih bisa disalahgunakan
-                            (titip absen). Mitigasi v1: batasan IP Wi-Fi kedai, waktu server, dan pencatatan IP.</p>
+                        <p class="mb-0"><strong>Catatan:</strong> absensi mencatat waktu server dan waktu check-in/check-out. Admin tetap dapat melakukan koreksi bila diperlukan.</p>
                     </div>
                 </div>
             </div>

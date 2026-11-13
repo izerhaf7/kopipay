@@ -18,6 +18,23 @@ class ProfileController extends BaseController
         ]);
     }
 
+    public function updateProfile()
+    {
+        $employee = current_employee();
+        if ($employee === null) return redirect()->to(site_url('me/profile'))->with('error', 'Profil karyawan tidak ditemukan.');
+        $file = $this->request->getFile('photo');
+        if ($file && $file->isValid() && ! $file->hasMoved()) {
+            if (! in_array($file->getMimeType(), ['image/jpeg', 'image/png', 'image/webp'], true) || $file->getSize() > 2 * 1024 * 1024) {
+                return redirect()->back()->with('error', 'Foto harus JPG, PNG, atau WEBP dan maksimal 2 MB.');
+            }
+            $name = $file->getRandomName();
+            $directory = FCPATH . 'uploads/employees';
+            if (! is_dir($directory)) mkdir($directory, 0755, true);
+            $file->move($directory, $name);
+            model(\App\Models\EmployeeModel::class)->update($employee->id, ['photo' => $name]);
+        }
+        return redirect()->to(site_url('me/profile'))->with('message', 'Profil berhasil diperbarui.');
+    }
     public function password()
     {
         return view('employee/password', [

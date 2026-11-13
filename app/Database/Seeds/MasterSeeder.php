@@ -42,6 +42,8 @@ class MasterSeeder extends Seeder
                 'late_grace_minutes'        => 15,
                 'late_deduction_per_minute' => 1000,
                 'alpha_penalty'             => 50000,
+                'izin_penalty'              => 0,
+                'sakit_penalty'             => 0,
                 'self_checkin_enabled'      => 1,
                 'checkin_early_minutes'     => 60,
                 'allowed_ip_ranges'         => '',

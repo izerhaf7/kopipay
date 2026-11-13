@@ -181,6 +181,10 @@ a:hover { text-decoration: underline; }
 .table tbody tr:hover { background: rgba(166, 123, 91, .07); }
 .table-light { --bs-table-bg: var(--kp-cream); }
 .kp-table-wrap { overflow-x: auto; border-radius: 0 0 var(--kp-radius) var(--kp-radius); }
+.kp-user-toolbar { padding: 1.35rem 1.5rem 1.5rem; }
+.kp-user-table-wrap { padding: 0 1.25rem; }
+.kp-user-table-wrap .kp-table-wrap { border: 1px solid var(--kp-border); border-radius: .7rem; }
+.kp-user-table-wrap + .d-flex { margin-top: .5rem; padding-top: 1rem !important; }
 
 /* --------------------------------------------------------------- forms */
 .form-label { font-weight: 500; font-size: .88rem; color: var(--kp-roast); margin-bottom: .35rem; }
@@ -293,6 +297,9 @@ a:hover { text-decoration: underline; }
 }
 
 .kp-chart-box { position: relative; height: 310px; min-height: 260px; }
+.kp-profile-photo { width: 110px; height: 110px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--kp-mocha); color: #fff; font-size: 2.3rem; font-weight: 700; border: 4px solid var(--kp-cream); box-shadow: 0 0 0 1px var(--kp-border); }
+.kp-profile-photo img { width: 100%; height: 100%; object-fit: cover; }
+
 .kp-chart-summary { display: flex; justify-content: center; gap: .65rem; flex-wrap: wrap; margin-top: 1rem; }
 .kp-chart-stat { min-width: 105px; padding: .65rem .8rem; text-align: center; background: var(--kp-cream); border: 1px solid var(--kp-border); border-radius: .65rem; }
 .kp-chart-stat strong { display: block; color: var(--kp-mocha); font-size: 1.2rem; font-weight: 700; }

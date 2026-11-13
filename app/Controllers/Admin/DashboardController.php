@@ -64,49 +64,19 @@ class DashboardController extends BaseController
     public function chartData()
     {
         $month = (string) ($this->request->getGet('month') ?? date('Y-m'));
+        if (! preg_match('/^\d{4}-\d{2}$/', $month)) $month = date('Y-m');
 
-        if (! preg_match('/^\d{4}-\d{2}$/', $month)) {
-            $month = date('Y-m');
-        }
-
-        $month = (string) ($this->request->getGet('month') ?? date('Y-m'));
-
-        if (! preg_match('/^\d{4}-\d{2}$/', $month)) {
-            $month = date('Y-m');
-        }
-
-        // Grafik memakai enam bulan terakhir, bukan tren per hari.
         $current = new \DateTimeImmutable($month . '-01');
-        $start   = $current->modify('-5 months')->format('Y-m-01');
-        $end     = $current->format('Y-m-t');
-        $rows    = model(AttendanceModel::class)->monthlyChart($start, $end);
-        $indexed = [];
-        foreach ($rows as $row) {
-            $indexed[$row['month_key']] = $row;
-        }
-
-        $labels = [];
-        $hadir  = [];
-        $telat  = [];
-        $menit  = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date  = $current->modify('-' . $i . ' months');
-            $key   = $date->format('Y-m');
-            $label = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][(int) $date->format('n') - 1] . ' ' . $date->format('Y');
-            $labels[] = $label;
-            $hadir[]  = (int) ($indexed[$key]['hadir'] ?? 0);
-            $telat[]  = (int) ($indexed[$key]['terlambat'] ?? 0);
-            $menit[]  = (int) ($indexed[$key]['total_late_minutes'] ?? 0);
-        }
+        $start = $current->format('Y-m-01');
+        $end = $current->format('Y-m-t');
+        $summary = model(AttendanceModel::class)->monthlyChart($start, $end);
 
         return $this->response->setJSON([
-            'month'  => $month,
-            'labels' => $labels,
-            'series' => [
-                'hadir' => $hadir,
-                'terlambat' => $telat,
-                'menit_terlambat' => $menit,
-            ],
+            'month' => $month,
+            'attendance' => ['hadir' => (int) ($summary['hadir'] ?? 0), 'tidak_hadir' => (int) ($summary['tidak_hadir'] ?? 0)],
+            'punctuality' => ['tepat_waktu' => (int) ($summary['tepat_waktu'] ?? 0), 'terlambat' => (int) ($summary['terlambat'] ?? 0)],
+            'total_records' => (int) ($summary['total_records'] ?? 0),
+            'total_late_minutes' => (int) ($summary['total_late_minutes'] ?? 0),
         ]);
     }
 }

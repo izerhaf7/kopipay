@@ -167,8 +167,6 @@ class AttendanceService
             throw new RuleViolationException('Akun karyawan tidak aktif. Hubungi Admin.');
         }
 
-        $this->assertIpAllowed($ip);
-
         $shift = $this->shifts->find((int) $employee->shift_id);
 
         if ($shift === null) {
@@ -460,63 +458,6 @@ class AttendanceService
     }
 
     // -----------------------------------------------------------------
-    // Pembatasan IP
+    // Check-in / check-out mandiri
     // -----------------------------------------------------------------
-
-    public function assertIpAllowed(string $ip): void
-    {
-        $ranges = trim((string) ($this->settings['allowed_ip_ranges'] ?? ''));
-
-        if ($ranges === '') {
-            return;
-        }
-
-        $ip = $this->normalizeIp($ip);
-
-        foreach (explode(',', $ranges) as $range) {
-            $range = trim($range);
-
-            if ($range !== '' && $this->ipInRange($ip, $this->normalizeIp($range))) {
-                return;
-            }
-        }
-
-        throw new RuleViolationException('Check-in hanya bisa dilakukan dari jaringan Wi-Fi kedai (' . $ranges . ').');
-    }
-
-    private function normalizeIp(string $ip): string
-    {
-        $ip = trim($ip);
-
-        if ($ip === '::1') {
-            return '127.0.0.1';
-        }
-
-        if (str_starts_with($ip, '::ffff:')) {
-            return substr($ip, 7);
-        }
-
-        return $ip;
-    }
-
-    private function ipInRange(string $ip, string $range): bool
-    {
-        if (! str_contains($range, '/')) {
-            return $ip === $range;
-        }
-
-        [$subnet, $bits] = explode('/', $range, 2);
-        $bits            = (int) $bits;
-
-        $ipLong     = ip2long($ip);
-        $subnetLong = ip2long($subnet);
-
-        if ($ipLong === false || $subnetLong === false || $bits < 0 || $bits > 32) {
-            return false;
-        }
-
-        $mask = $bits === 0 ? 0 : (-1 << (32 - $bits)) & 0xFFFFFFFF;
-
-        return ($ipLong & $mask) === ($subnetLong & $mask);
-    }
 }

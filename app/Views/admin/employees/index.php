@@ -103,16 +103,12 @@
                             <?php endif ?>
                         </td>
                         <td class="text-end" style="white-space:nowrap">
+                            <a class="btn btn-ghost btn-sm" href="<?= site_url('admin/employees/' . $employee->id) ?>" title="Lihat detail">
+                                <i class="bi bi-eye"></i>
+                            </a>
                             <a class="btn btn-ghost btn-sm" href="<?= site_url('admin/employees/' . $employee->id . '/edit') ?>" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
-
-                            <form class="d-inline" action="<?= site_url('admin/employees/' . $employee->id . '/toggle-status') ?>" method="post">
-                                <?= csrf_field() ?>
-                                <button class="btn btn-ghost btn-sm" type="submit" title="Aktif / nonaktifkan">
-                                    <i class="bi <?= $employee->status === 'aktif' ? 'bi-pause-circle' : 'bi-play-circle' ?>"></i>
-                                </button>
-                            </form>
 
                             <form class="d-inline" action="<?= site_url('admin/employees/' . $employee->id . '/delete') ?>" method="post"
                                   onsubmit="return confirm('Hapus <?= esc($employee->full_name, 'js') ?>? Riwayat absensi & payroll tetap disimpan.')">

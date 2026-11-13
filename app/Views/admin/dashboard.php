@@ -158,70 +158,24 @@
 <script>
 (function () {
     const attendanceCanvas = document.getElementById('kpAttendanceChart');
-    const lateCanvas       = document.getElementById('kpLateChart');
-    const input             = document.getElementById('kpChartMonth');
-    let attendanceChart;
-    let lateChart;
-
-    const months = {
-        hadir: '#6F4E37',
-        terlambat: '#C68B59',
-        menit: '#A67B5B'
-    };
-
+    const lateCanvas = document.getElementById('kpLateChart');
+    const input = document.getElementById('kpChartMonth');
+    let attendanceChart, lateChart;
     async function loadCharts(month) {
-        const res  = await fetch('<?= site_url('admin/dashboard/chart-data') ?>?month=' + encodeURIComponent(month));
-        const data = await res.json();
-
-        const totalHadir = data.series.hadir.reduce((a, b) => a + b, 0);
-        const totalTelat = data.series.terlambat.reduce((a, b) => a + b, 0);
-        const totalMenit = data.series.menit_terlambat.reduce((a, b) => a + b, 0);
-        const activeMonth = data.labels[data.labels.length - 1];
-        document.getElementById('kpAttendanceSummary').innerHTML = `
-            <div class="kp-chart-stat"><strong>${totalHadir}</strong><span>Total hadir</span></div>
-            <div class="kp-chart-stat"><strong>${data.series.hadir[data.series.hadir.length - 1]}</strong><span>${activeMonth}</span></div>
-            <div class="kp-chart-stat"><strong>${data.labels.length}</strong><span>Bulan</span></div>`;
-        document.getElementById('kpLateSummary').innerHTML = `
-            <div class="kp-chart-stat"><strong>${totalTelat}</strong><span>Kasus terlambat</span></div>
-            <div class="kp-chart-stat"><strong>${totalMenit}</strong><span>Total menit</span></div>
-            <div class="kp-chart-stat"><strong>${totalTelat ? Math.round(totalMenit / totalTelat) : 0}</strong><span>Rata-rata menit</span></div>`;
-
-        const attendanceData = {
-            labels: data.labels,
-            datasets: [{
-                data: data.series.hadir,
-                backgroundColor: ['#2E4A3C', '#6B8068', '#9AA894', '#C9D1C5', '#6F4E37', '#D8C7A7'],
-                borderColor: '#FFF8F0', borderWidth: 2
-            }]
-        };
-        const lateData = {
-            labels: data.labels,
-            datasets: [{
-                data: data.series.menit_terlambat,
-                backgroundColor: ['#6F4E37', '#805D43', '#927057', '#A5836B', '#B6967D', '#C9AF98'],
-                borderColor: '#FFF8F0', borderWidth: 2
-            }]
-        };
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', labels: { boxWidth: 14, padding: 10, font: { size: 10 } } } }
-        };
-
-        if (attendanceChart) {
-            attendanceChart.data = attendanceData;
-            attendanceChart.update();
-            lateChart.data = lateData;
-            lateChart.update();
-            return;
-        }
-
-        attendanceChart = new Chart(attendanceCanvas, { type: 'pie', data: attendanceData, options });
-        lateChart = new Chart(lateCanvas, { type: 'pie', data: lateData, options });
+        const data = await (await fetch('<?= site_url('admin/dashboard/chart-data') ?>?month=' + encodeURIComponent(month))).json();
+        const monthLabel = new Date(month + '-02').toLocaleDateString('id-ID', {month:'long', year:'numeric'});
+        const hadir = data.attendance.hadir, tidakHadir = data.attendance.tidak_hadir;
+        const tepat = data.punctuality.tepat_waktu, terlambat = data.punctuality.terlambat;
+        document.getElementById('kpAttendanceSummary').innerHTML = `<div class="kp-chart-stat"><strong>${data.total_records}</strong><span>Total catatan</span></div><div class="kp-chart-stat"><strong>${hadir}</strong><span>Hadir</span></div><div class="kp-chart-stat"><strong>${tidakHadir}</strong><span>Tidak hadir</span></div>`;
+        document.getElementById('kpLateSummary').innerHTML = `<div class="kp-chart-stat"><strong>${tepat}</strong><span>Tepat waktu</span></div><div class="kp-chart-stat"><strong>${terlambat}</strong><span>Terlambat</span></div><div class="kp-chart-stat"><strong>${data.total_late_minutes}</strong><span>Total menit</span></div>`;
+        const options = {responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top', labels:{boxWidth:14,padding:10,font:{size:10}}}}};
+        const attendanceData = {labels:['Hadir','Tidak Hadir'], datasets:[{data:[hadir,tidakHadir], backgroundColor:['#2E4A3C','#D8C7A7'], borderColor:'#FFF8F0',borderWidth:2}]};
+        const lateData = {labels:['Tepat Waktu','Terlambat'], datasets:[{data:[tepat,terlambat], backgroundColor:['#6B8068','#C68B59'], borderColor:'#FFF8F0',borderWidth:2}]};
+        if (attendanceChart) { attendanceChart.data=attendanceData; attendanceChart.update(); lateChart.data=lateData; lateChart.update(); return; }
+        attendanceChart = new Chart(attendanceCanvas,{type:'pie',data:attendanceData,options});
+        lateChart = new Chart(lateCanvas,{type:'pie',data:lateData,options});
     }
-
-    loadCharts(input.value);
-    input.addEventListener('change', () => loadCharts(input.value));
+    loadCharts(input.value); input.addEventListener('change',()=>loadCharts(input.value));
 })();
 </script>
 <?= $this->endSection() ?>

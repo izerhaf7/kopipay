@@ -71,6 +71,14 @@ $periodLabel = periode_label((int) $period['period_month'], (int) $period['perio
         <td align="right" style="border-bottom:1px solid #E3D3BF;"><?= rupiah($p['late_deduction']) ?></td>
     </tr>
     <tr>
+        <td style="border-bottom:1px solid #E3D3BF;">Izin (<?= (int) $p['days_izin'] ?> hari x <?= rupiah($p['izin_penalty']) ?>)</td>
+        <td align="right" style="border-bottom:1px solid #E3D3BF;"><?= rupiah($p['izin_deduction']) ?></td>
+    </tr>
+    <tr>
+        <td style="border-bottom:1px solid #E3D3BF;">Sakit (<?= (int) $p['days_sakit'] ?> hari x <?= rupiah($p['sakit_penalty']) ?>)</td>
+        <td align="right" style="border-bottom:1px solid #E3D3BF;"><?= rupiah($p['sakit_deduction']) ?></td>
+    </tr>
+    <tr>
         <td style="border-bottom:1px solid #E3D3BF;">
             Alpha (<?= (int) $p['days_alpha'] ?> hari x <?= rupiah($p['alpha_penalty']) ?>)
         </td>
@@ -78,7 +86,7 @@ $periodLabel = periode_label((int) $period['period_month'], (int) $period['perio
     </tr>
     <tr style="font-weight:bold;background-color:#F5EBDD;">
         <td>Total Potongan</td>
-        <td align="right"><?= rupiah((int) $p['late_deduction'] + (int) $p['alpha_deduction']) ?></td>
+        <td align="right"><?= rupiah((int) $p['late_deduction'] + (int) $p['izin_deduction'] + (int) $p['sakit_deduction'] + (int) $p['alpha_deduction']) ?></td>
     </tr>
 </table>
 

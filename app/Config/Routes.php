@@ -53,9 +53,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ro
     $routes->get('employees', 'EmployeeController::index', ['filter' => 'permission:employees.manage']);
     $routes->get('employees/new', 'EmployeeController::new', ['filter' => 'permission:employees.manage']);
     $routes->post('employees', 'EmployeeController::create', ['filter' => 'permission:employees.manage']);
+    $routes->get('employees/(:num)', 'EmployeeController::detail/$1', ['filter' => 'permission:employees.manage']);
     $routes->get('employees/(:num)/edit', 'EmployeeController::edit/$1', ['filter' => 'permission:employees.manage']);
     $routes->post('employees/(:num)', 'EmployeeController::update/$1', ['filter' => 'permission:employees.manage']);
-    $routes->post('employees/(:num)/toggle-status', 'EmployeeController::toggleStatus/$1', ['filter' => 'permission:employees.manage']);
     $routes->post('employees/(:num)/delete', 'EmployeeController::delete/$1', ['filter' => 'permission:employees.manage']);
 
     // Absensi
@@ -76,7 +76,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ro
     $routes->get('payroll/slip/(:num)/pdf', 'PayrollController::slipPdf/$1', ['filter' => 'permission:payroll.export']);
     $routes->get('payroll/(:num)/recap/pdf', 'PayrollController::recapPdf/$1', ['filter' => 'permission:payroll.export']);
 
-    // Manajemen user
+    $routes->get('profile', 'ProfileController::index', ['filter' => 'role:admin']);
+    $routes->post('profile', 'ProfileController::update', ['filter' => 'role:admin']);
+
     $routes->get('users', 'UserController::index', ['filter' => 'role:admin']);
     $routes->get('users/new', 'UserController::new', ['filter' => 'role:admin']);
     $routes->post('users', 'UserController::create', ['filter' => 'role:admin']);
@@ -96,6 +98,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ro
 $routes->group('me', ['namespace' => 'App\Controllers\Employee', 'filter' => ['role:karyawan', 'employeeProfile']], static function ($routes) {
     $routes->get('dashboard', 'DashboardController::index');
     $routes->get('profile', 'ProfileController::show');
+    $routes->post('profile/photo', 'ProfileController::updateProfile');
     $routes->get('password', 'ProfileController::password');
     $routes->post('password', 'ProfileController::updatePassword');
 

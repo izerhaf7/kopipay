@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-header"><?= $isEdit ? 'Edit Karyawan' : 'Karyawan Baru' ?></div>
             <div class="card-body">
-                <form action="<?= $isEdit ? site_url('admin/employees/' . $employee->id) : site_url('admin/employees') ?>" method="post">
+                <form action="<?= $isEdit ? site_url('admin/employees/' . $employee->id) : site_url('admin/employees') ?>" method="post" enctype="multipart/form-data">
                     <?= csrf_field() ?>
 
                     <div class="row g-3">
@@ -73,6 +73,11 @@
                         </div>
 
                         <div class="col-12 col-md-6">
+                            <label class="form-label" for="photo">Foto Profil</label>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/jpeg,image/png,image/webp" data-crop-photo>
+                            <div class="form-text">JPG, PNG, atau WEBP. Maksimal 2 MB.</div>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <label class="form-label" for="phone">No. HP</label>
                             <input type="text" class="form-control" id="phone" name="phone" maxlength="25"
                                 value="<?= esc(old('phone', $employee->phone ?? '')) ?>" placeholder="0812xxxxxxx">
@@ -112,4 +117,12 @@
         </div>
     </div>
 </div>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => { document.querySelectorAll('[data-crop-photo]').forEach(input => { const preview=document.createElement('img'); preview.style.cssText='display:none;max-width:100%;max-height:300px;margin-top:12px;border-radius:12px'; input.after(preview); let cropper; input.addEventListener('change',()=>{const file=input.files[0];if(!file)return;if(cropper)cropper.destroy();preview.src=URL.createObjectURL(file);preview.style.display='block';cropper=new Cropper(preview,{aspectRatio:1,viewMode:1});}); input.closest('form').addEventListener('submit',e=>{if(!cropper)return;e.preventDefault();cropper.getCroppedCanvas({width:600,height:600}).toBlob(blob=>{const dt=new DataTransfer();dt.items.add(new File([blob],'profile.jpg',{type:'image/jpeg'}));input.files=dt.files;input.closest('form').submit();},'image/jpeg',.9);});});});
+</script>
 <?= $this->endSection() ?>

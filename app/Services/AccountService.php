@@ -66,6 +66,7 @@ class AccountService
                 'full_name'     => $data['full_name'],
                 'phone'         => $data['phone'] ?? null,
                 'address'       => $data['address'] ?? null,
+                'photo'         => $data['photo'] ?? null,
                 'position_id'   => (int) $data['position_id'],
                 'shift_id'      => (int) $data['shift_id'],
                 'hire_date'     => $data['hire_date'],
@@ -103,7 +104,7 @@ class AccountService
             throw new RuleViolationException('Karyawan tidak ditemukan.');
         }
 
-        $this->employees->update($employeeId, [
+        $update = [
             'employee_code' => $data['employee_code'],
             'full_name'     => $data['full_name'],
             'phone'         => $data['phone'] ?? null,
@@ -112,7 +113,9 @@ class AccountService
             'shift_id'      => (int) $data['shift_id'],
             'hire_date'     => $data['hire_date'],
             'status'        => $data['status'] ?? 'aktif',
-        ]);
+        ];
+        if (! empty($data['photo'])) $update['photo'] = $data['photo'];
+        $this->employees->update($employeeId, $update);
 
         if ($this->employees->errors() !== []) {
             throw new RuleViolationException(implode(' ', $this->employees->errors()));

@@ -10,7 +10,7 @@ class PayrollSettingModel extends Model
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $allowedFields = [
-        'late_grace_minutes', 'late_deduction_per_minute', 'alpha_penalty',
+        'late_grace_minutes', 'late_deduction_per_minute', 'alpha_penalty', 'izin_penalty', 'sakit_penalty',
         'self_checkin_enabled', 'checkin_early_minutes', 'allowed_ip_ranges',
         'company_name', 'company_address',
     ];
@@ -28,6 +28,8 @@ class PayrollSettingModel extends Model
                 'late_grace_minutes'        => 10,
                 'late_deduction_per_minute' => 1000,
                 'alpha_penalty'             => 50000,
+                'izin_penalty'              => 0,
+                'sakit_penalty'             => 0,
                 'self_checkin_enabled'      => 1,
                 'checkin_early_minutes'     => 60,
                 'allowed_ip_ranges'         => '',

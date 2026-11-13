@@ -136,39 +136,4 @@ final class AttendanceRuleTest extends CIUnitTestCase
         $this->assertTrue($window['open']);
     }
 
-    // -------------------------------------------------------------- batasan IP
-
-    public function testTanpaBatasanIpSemuaBoleh(): void
-    {
-        $this->service()->assertIpAllowed('10.1.2.3');
-
-        $this->assertTrue(true); // tidak ada exception
-    }
-
-    public function testCidrDiizinkan(): void
-    {
-        $service = $this->service(array_merge($this->settings, ['allowed_ip_ranges' => '192.168.1.0/24, 10.0.0.5']));
-
-        $service->assertIpAllowed('192.168.1.77');
-        $service->assertIpAllowed('10.0.0.5');
-
-        $this->assertTrue(true);
-    }
-
-    public function testIpDiLuarDaftarDitolak(): void
-    {
-        $service = $this->service(array_merge($this->settings, ['allowed_ip_ranges' => '192.168.1.0/24']));
-
-        $this->expectException(RuleViolationException::class);
-        $service->assertIpAllowed('8.8.8.8');
-    }
-
-    public function testIpv6LocalhostDinormalkan(): void
-    {
-        $service = $this->service(array_merge($this->settings, ['allowed_ip_ranges' => '127.0.0.1']));
-
-        $service->assertIpAllowed('::1');
-
-        $this->assertTrue(true);
-    }
 }

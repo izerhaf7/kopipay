@@ -105,7 +105,10 @@ class EmployeeController extends BaseController
         }
 
         try {
-            $result = $this->accounts->createEmployee($this->payload(), (int) user_id());
+            $payload = $this->payload();
+            $photo = $this->savePhoto($this->request->getFile('photo'));
+            if ($photo !== null) $payload['photo'] = $photo;
+            $result = $this->accounts->createEmployee($payload, (int) user_id());
         } catch (RuleViolationException $e) {
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
@@ -121,10 +124,22 @@ class EmployeeController extends BaseController
             ]);
     }
 
+    public function detail(int $id)
+    {
+        $employee = $this->employees->findWithRelations($id);
+        if ($employee === null) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        return view('admin/employees/detail', [
+            'title' => 'Detail Karyawan',
+            'subtitle' => 'Informasi lengkap karyawan',
+            'employee' => $employee,
+        ]);
+    }
     public function edit(int $id)
     {
         $employee = $this->employees->findWithRelations($id);
-
         if ($employee === null) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
@@ -139,6 +154,7 @@ class EmployeeController extends BaseController
         ]);
     }
 
+
     public function update(int $id)
     {
         $employee = $this->employees->find($id);
@@ -149,7 +165,7 @@ class EmployeeController extends BaseController
 
         $rules = [
             'full_name'     => 'required|max_length[120]',
-            'employee_code' => 'required|max_length[20]|is_unique[employees.employee_code,id,' . $id . ']',
+            'employee_code' => 'required|max_length[20]',
             'phone'         => 'permit_empty|max_length[25]',
             'position_id'   => 'required|is_natural_no_zero',
             'shift_id'      => 'required|is_natural_no_zero',
@@ -161,8 +177,21 @@ class EmployeeController extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $code = trim((string) $this->request->getPost('employee_code'));
+        $duplicate = db_connect()->table('employees')
+            ->where('employee_code', $code)
+            ->where('id !=', $id)
+            ->where('deleted_at', null)
+            ->get()->getFirstRow();
+        if ($duplicate !== null) {
+            return redirect()->back()->withInput()->with('errors', ['employee_code' => 'Kode karyawan sudah dipakai oleh karyawan lain.']);
+        }
+
         try {
-            $this->accounts->updateEmployee($id, $this->payload(), (int) user_id());
+            $payload = $this->payload();
+            $photo = $this->savePhoto($this->request->getFile('photo'));
+            if ($photo !== null) $payload['photo'] = $photo;
+            $this->accounts->updateEmployee($id, $payload, (int) user_id());
         } catch (RuleViolationException $e) {
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
@@ -231,7 +260,20 @@ class EmployeeController extends BaseController
             'position_id'   => (int) $this->request->getPost('position_id'),
             'shift_id'      => (int) $this->request->getPost('shift_id'),
             'hire_date'     => (string) $this->request->getPost('hire_date'),
-            'status'        => (string) ($this->request->getPost('status') ?? 'aktif'),
+                            'status'        => (string) ($this->request->getPost('status') ?? 'aktif'),
+            'photo'         => $this->savePhoto($this->request->getFile('photo')),
         ];
+    }
+
+    private function savePhoto(?\CodeIgniter\HTTP\Files\UploadedFile $file): ?string
+    {
+        if ($file === null || ! $file->isValid() || $file->hasMoved()) return null;
+        if (! in_array($file->getMimeType(), ['image/jpeg','image/png','image/webp'], true)) return null;
+        if ($file->getSize() > 2 * 1024 * 1024) return null;
+        $name = $file->getRandomName();
+        $directory = FCPATH . 'uploads/employees';
+        if (! is_dir($directory)) mkdir($directory, 0755, true);
+        $file->move($directory, $name);
+        return $name;
     }
 }

@@ -56,6 +56,9 @@
             <a class="nav-link <?= url_is('admin/logs*') ? 'active' : '' ?>" href="<?= site_url('admin/logs') ?>">
                 <i class="bi bi-journal-text"></i> Log Aktivitas
             </a>
+            <a class="nav-link <?= url_is('admin/profile*') ? 'active' : '' ?>" href="<?= site_url('admin/profile') ?>">
+                <i class="bi bi-person-circle"></i> Profil Saya
+            </a>
         </nav>
     </aside>
 
@@ -72,15 +75,27 @@
             <div class="d-none d-md-flex align-items-center gap-2 me-2">
                 <span class="kp-badge-soft"><i class="bi bi-calendar3"></i> <?= tanggal_id(date('Y-m-d')) ?></span>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <div class="kp-avatar"><?= esc(strtoupper(substr(user()->username ?? 'A', 0, 1))) ?></div>
-                <div class="d-none d-sm-block lh-sm">
-                    <div class="fw-semibold small"><?= esc(user()->username ?? '') ?></div>
-                    <div class="text-muted" style="font-size:.72rem">Administrator</div>
-                </div>
-                <a class="btn btn-ghost btn-sm" href="<?= site_url('logout') ?>" title="Keluar">
-                    <i class="bi bi-box-arrow-right"></i>
-                </a>
+            <div class="dropdown">
+                <button class="btn btn-ghost d-flex align-items-center gap-2 p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <?php $adminPhoto = user()->photo ?? null; ?>
+                    <?php if ($adminPhoto): ?>
+                        <img class="kp-avatar" style="object-fit:cover" src="<?= base_url('uploads/users/' . esc($adminPhoto)) ?>" alt="Foto profil">
+                    <?php else: ?>
+                        <div class="kp-avatar"><?= esc(strtoupper(substr(user()->username ?? 'A', 0, 1))) ?></div>
+                    <?php endif ?>
+                    <div class="d-none d-sm-block lh-sm text-start">
+                        <div class="fw-semibold small"><?= esc(user()->username ?? '') ?></div>
+                        <div class="text-muted" style="font-size:.72rem">Administrator</div>
+                    </div>
+                    <i class="bi bi-chevron-down small"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <li><h6 class="dropdown-header">Akun Saya</h6></li>
+                    <li><a class="dropdown-item" href="<?= site_url('admin/profile') ?>"><i class="bi bi-person-circle me-2"></i> Profil</a></li>
+                    <li><a class="dropdown-item" href="<?= site_url('admin/settings') ?>"><i class="bi bi-sliders me-2"></i> Pengaturan</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="<?= site_url('logout') ?>"><i class="bi bi-box-arrow-right me-2"></i> Keluar</a></li>
+                </ul>
             </div>
         </header>
 

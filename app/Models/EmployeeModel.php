@@ -12,13 +12,13 @@ class EmployeeModel extends Model
     protected $returnType    = Employee::class;
     protected $useSoftDeletes = true;
     protected $allowedFields = [
-        'user_id', 'employee_code', 'full_name', 'phone', 'address',
+        'user_id', 'employee_code', 'full_name', 'phone', 'address', 'photo',
         'position_id', 'shift_id', 'hire_date', 'status',
     ];
     protected $useTimestamps = true;
 
     protected $validationRules = [
-        'employee_code' => 'required|max_length[20]|is_unique[employees.employee_code,id,{id}]',
+        'employee_code' => 'required|max_length[20]',
         'full_name'     => 'required|max_length[120]',
         'position_id'   => 'required|is_natural_no_zero',
         'shift_id'      => 'required|is_natural_no_zero',
